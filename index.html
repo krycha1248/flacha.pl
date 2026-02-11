@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kalkulator promili alkoholu – oblicz poziom alkoholu we krwi | Flacha.pl</title>
+    <meta name="description"
+        content="Prosty kalkulator promili alkoholu. Oblicz szacowany poziom alkoholu we krwi po spożyciu piwa, wina lub wódki. Sprawdź czas wytrzeźwienia i bądź odpowiedzialny." />
+    <meta name="keywords"
+        content="kalkulator promili, promile, alkohol, poziom alkoholu, oblicz promile, czas wytrzeźwienia" />
+    <meta name="author" content="Krystian Włodek" />
+
+    <link rel="icon" href="assets/images/favicon.png" type="image/png" sizes="256x256">
+
+    <meta property="og:title" content="Kalkulator promili alkoholu – Flacha.pl" />
+    <meta property="og:description"
+        content="Prosty kalkulator promili alkoholu. Oblicz szacowany poziom alkoholu we krwi po spożyciu piwa, wina lub wódki." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="flacha.pl" />
+    <meta property="og:image" content="assets/images/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e9f0f7;
+            color: #222;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        main {
+            background: #fff;
+            max-width: 600px;
+            width: 100%;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-weight: 700;
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .powered-by {
+            text-align: center;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        .powered-by a {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        form label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        form input[type=number],
+        form select {
+            margin-top: 8px;
+            padding: 10px 12px;
+            font-size: 1rem;
+            border: 1.8px solid #bdc3c7;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: #2980b9;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 30px;
+            background: #f7fbff;
+            border-left: 6px solid #2980b9;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+
+        #disclaimerModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000bb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #disclaimerModal div {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Kalkulator promili alkoholu</h1>
+        <div class="powered-by">Powered by <a href="https://wlodek.net" target="_blank">Krystian Włodek</a></div>
+        <form id="alcoForm">
+            <label for="gender">Płeć:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Mężczyzna</option>
+                <option value="female">Kobieta</option>
+            </select>
+
+            <label for="weight">Waga (kg):</label>
+            <input type="number" id="weight" name="weight" min="30" max="200" required />
+
+            <label for="beer">Piwo (0,5l, 5%) - liczba sztuk:</label>
+            <input type="number" id="beer" name="beer" min="0" value="0" />
+
+            <label for="wine">Wino (150ml, 12%) - liczba porcji:</label>
+            <input type="number" id="wine" name="wine" min="0" value="0" />
+
+            <label for="vodka">Wódka (40ml, 40%) - liczba kieliszków:</label>
+            <input type="number" id="vodka" name="vodka" min="0" value="0" />
+
+            <label for="timeSinceEnd">Ile godzin minęło od zakończenia picia?</label>
+            <input type="number" id="timeSinceEnd" name="timeSinceEnd" min="0" value="0" required />
+
+            <button type="submit">Oblicz promile</button>
+
+            <p style="margin-top:15px;font-size:0.85rem;color:#777;text-align:center;">
+                Wynik ma charakter szacunkowy i nie powinien być podstawą do podejmowania decyzji o prowadzeniu
+                pojazdów. Zawsze zachowuj ostrożność.
+            </p>
+        </form>
+        <div class="result" id="result"></div>
+    </main>
+
+    <div id="disclaimerModal">
+        <div>
+            <h2>Uwaga!</h2>
+            <p>Ten kalkulator ma charakter wyłącznie orientacyjny. Nie powinien być wykorzystywany jako podstawa do
+                oceny
+                zdolności do prowadzenia pojazdu ani podejmowania decyzji zdrowotnych. Używając tej strony,
+                potwierdzasz, że masz ukończone 18 lat.</p>
+            <button id="acceptDisclaimer">Akceptuję i wchodzę</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("acceptDisclaimer").onclick = function () {
+            document.getElementById("disclaimerModal").style.display = "none";
+        };
+
+        document.getElementById("alcoForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const gender = document.getElementById("gender").value;
+            const weight = parseFloat(document.getElementById("weight").value);
+            const beer = parseInt(document.getElementById("beer").value) || 0;
+            const wine = parseInt(document.getElementById("wine").value) || 0;
+            const vodka = parseInt(document.getElementById("vodka").value) || 0;
+            const timeSinceEnd = parseFloat(document.getElementById("timeSinceEnd").value) || 0;
+
+            const r = gender === "male" ? 0.7 : 0.6;
+            const A = beer * 20 + wine * 18 + vodka * 12.8;
+            let BAC = A / (r * weight) - 0.15 * timeSinceEnd;
+            BAC = Math.max(BAC, 0);
+
+            let soberHours = BAC > 0 ? Math.ceil(BAC / 0.15) : 0;
+
+            let message = "";
+
+            if (A === 0) {
+                message = "Brak spożycia alkoholu – nie wykryto promili.";
+            } else {
+                message = `<strong>Szacowany poziom alkoholu we krwi:</strong> ${BAC.toFixed(2)} ‰<br/>`;
+                message += `<strong>Szacowany czas do wytrzeźwienia:</strong> ${soberHours} godz.`;
+
+                if (BAC === 0) {
+                    message += "<br>Brak alkoholu we krwi — jesteś trzeźwy.";
+                } else if (BAC < 0.2) {
+                    message += "<br>Niski poziom alkoholu, ale zachowaj ostrożność.";
+                } else {
+                    message += "<br>Uwaga: to może być stan upojenia alkoholowego.";
+                }
+
+                message += "<br><br><strong>Nie prowadź pojazdów po spożyciu alkoholu – nawet przy niskim poziomie promili.</strong>";
+            }
+
+            document.getElementById("result").innerHTML = message;
+        });
+    </script>
+</body>
+
+</html>
