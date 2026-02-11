@@ -41,4 +41,9 @@ Options -Indexes
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 </IfModule>
 
+# Blokada pliku
+<Files ".ftp-deploy-sync-state.json">
+    Require all denied
+</Files>
+
 ErrorDocument 404 /404.html
